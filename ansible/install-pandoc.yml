@@ -1,0 +1,19 @@
+---
+- hosts: author-path-qa
+#- hosts: author-path-qa:author-path-live
+  sudo: yes
+  gather_facts: false
+  vars:
+    download_url: 'https://github.com/jgm/pandoc/releases/download'
+    pandoc_version: '2.2.2'
+    download_location: '/usr/local/src/'
+    install_location: '/usr/local/'
+  tasks:
+    - name: 1. pandoc exist ?
+      command: rm {{download_location}}/pandoc-{{pandoc_version}}-linux.tar.gz
+    - name: 2. get pandoc tarball
+      command: wget {{download_url}}/{{pandoc_version}}/pandoc-{{pandoc_version}}-linux.tar.gz -P {{download_location}}
+#    - name: 3. deploy pandoc 
+#        command: 'tar xvzf pandoc-{{pandoc_version}}-linux.tar.gz --strip-components 1 -C {{install_location}}'
+    - name: 4. delete pandoc tarball
+      command: rm {{download_location}}/pandoc-{{pandoc_version}}-linux.tar.gz
