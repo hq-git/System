@@ -1,19 +1,27 @@
 ---
-- hosts: author-path-qa
+# ansible-playbook install-pandoc.yml --ask-become-pass
+- hosts: test
 #- hosts: author-path-qa:author-path-live
-  sudo: yes
+  become: yes
+#  become_user: root
+#  become_method: sudo
   gather_facts: false
   vars:
     download_url: 'https://github.com/jgm/pandoc/releases/download'
     pandoc_version: '2.2.2'
-    download_location: '/usr/local/src/'
-    install_location: '/usr/local/'
+    download_path: '/usr/local/src/'
+    install_path: '/usr/local/'
+    #If start with {, it must be in '', or playbook will think it's a dictionary.
+    absolute_download_url: '{{download_url}}/{{pandoc_version}}/pandoc-{{pandoc_version}}-linux.tar.gz'
+    absolute_download_des: '{{download_path}}/pandoc-{{pandoc_version}}-linux.tar.gz'
   tasks:
-    - name: 1. pandoc exist ?
-      command: rm {{download_location}}/pandoc-{{pandoc_version}}-linux.tar.gz
-    - name: 2. get pandoc tarball
-      command: wget {{download_url}}/{{pandoc_version}}/pandoc-{{pandoc_version}}-linux.tar.gz -P {{download_location}}
-    - name: 3. deploy pandoc
-      command: tar xvzf pandoc-{{pandoc_version}}-linux.tar.gz --strip-components 1 -C {{install_location}}
-    - name: 4. delete pandoc tarball
-      command: rm {{download_location}}/pandoc-{{pandoc_version}}-linux.tar.gz
+    - name: 1. Download pandoc tarball if it's content changed
+      get_url:
+        url: '{{absolute_download_url}}'
+        dest: '{{absolute_download_des}}'
+    - name: 2. Deploy pandoc
+      command: tar xvzf {{absolute_download_des}} --strip-components 1 -C {{install_path}} warn=False
+    - name: 3. Delete pandoc tarball
+      file:
+        state: absent
+        path: '{{absolute_download_des}}'
