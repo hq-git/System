@@ -1,5 +1,9 @@
 ---
 # ansible-playbook install-pandoc.yml --ask-become-pass
+# ansible-playbook install-pandoc.yml --syntax-check
+# ansible-playbook playbooks/PLAYBOOK_NAME.yml --limit "host1,host2" --ask-become-pass
+# ansible-playbook playbooks/PLAYBOOK_NAME.yml --limit "all:!host1" --ask-become-pass
+# ansible-playbook playbooks/PLAYBOOK_NAME.yml --tags 'install'
 - hosts: test
 #- hosts: author-path-qa:author-path-live
   become: yes
