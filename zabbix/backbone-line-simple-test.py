@@ -3,29 +3,23 @@
 
 import requests
 import time
-import threading
 import json
 
 
-url_dict = {
-    'api_ha': 'http://bb.liwenbianji.cn:3030/api/Server/status',
-    'api_direct': 'http://bb.edanzgroup.com:3000/api/Server/status',
-}
+url = 'http://bb.liwenbianji.cn:3030/api/Server/status'
 interval_time = int(10)
 record_dict = {}
-thread_list = []
-lock = threading.Lock()
 
 
-def get_status(target):
+def get_status(url_str):
     while True:
-        if target in record_dict:
-            record_dict[target]['total_times'] += 1
+        if url_str in record_dict:
+            record_dict[url_str]['total_times'] += 1
         else:
-            record_dict[target] = {'total_times': 1}
+            record_dict[url_str] = {'total_times': 1}
         # Get Sysbb API status
         try:
-            ret = requests.get(url_dict[target], timeout=5)
+            ret = requests.get(url_str, timeout=5)
             # print(ret.status_code, ret.content)
         # Failed
         except requests.ConnectionError as e:
@@ -39,26 +33,16 @@ def get_status(target):
             continue
         # Judge the return value (1)
         if ret.status_code == 200 and ret.content == b'1':
-            if 'success_times' in record_dict[target]:
-                record_dict[target]['success_times'] += 1
+            if 'success_times' in record_dict[url_str]:
+                record_dict[url_str]['success_times'] += 1
             else:
-                record_dict[target]['success_times'] = 1
+                record_dict[url_str]['success_times'] = 1
         # Update file
-        with open('backbone-line-test-result.json', 'w') as f:
+        with open('backbone-line-simple-test-result.json', 'w') as f:
             # print(record_dict)
             json.dump(record_dict, f)
         # Collect interval
         time.sleep(interval_time)
-
-
-def run():
-    for i in url_dict:
-        t = threading.Thread(target=get_status, args=(i,))
-        thread_list.append(t)
-        t.start()
-
-    for t in thread_list:
-        t.join()
 
 
 if __name__ == '__main__':
@@ -67,7 +51,7 @@ if __name__ == '__main__':
     print('%s Start test Sysbb API !'%start_time)
     record_dict['start_time'] = start_time
     # Begin
-    run()
+    get_status(url)
 
 
 
