@@ -21,12 +21,12 @@ def get_status(target):
     while True:
         # Get Sysbb API status
         try:
-            ret = requests.get(url_dict[target], timeout=5)
-            # print(ret.status_code, ret.content)
             if target in record_dict:
                 record_dict[target]['total_times'] += 1
             else:
                 record_dict[target] = {'total_times': 1}
+            ret = requests.get(url_dict[target], timeout=5)
+            # print(ret.status_code, ret.content)
         # Failed
         except requests.ConnectionError as e:
             print('ConnectionError', e)
