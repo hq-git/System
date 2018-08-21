@@ -8,7 +8,12 @@ import json
 
 url = 'http://bb.liwenbianji.cn:3030/api/Server/status'
 interval_time = int(10)
-record_dict = {}
+record_dict = {
+    'time': {
+            'start': '',
+            'update': '',
+            }
+}
 
 
 def get_status(url_str):
@@ -22,11 +27,13 @@ def get_status(url_str):
             ret = requests.get(url_str, timeout=5)
             # print(ret.status_code, ret.content)
         # Failed
-        except requests.ConnectionError as e:
-            # print('ConnectionError', e)
-            continue
-        except requests.ConnectTimeout as e:
+        except KeyboardInterrupt:
+            exit('Collect end !')
+        except requests.exceptions.ConnectTimeout as e:
             # print('ConnectTimeout', e)
+            continue
+        except requests.exceptions.ConnectionError as e:
+            # print('ConnectionError', e)
             continue
         except Exception as e:
             # print('unknown error', e)
@@ -37,8 +44,11 @@ def get_status(url_str):
                 record_dict[url_str]['success_times'] += 1
             else:
                 record_dict[url_str]['success_times'] = 1
+        # Get update time
+        update_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        record_dict['time']['update'] = update_time
         # Update file
-        with open('backbone-line-simple-test-result.json', 'w') as f:
+        with open('%s-result.json' % __file__.replace('.py', ''), 'w') as f:
             # print(record_dict)
             json.dump(record_dict, f)
         # Collect interval
@@ -49,7 +59,7 @@ if __name__ == '__main__':
     # Get start time
     start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     print('%s Start test Sysbb API !'%start_time)
-    record_dict['start_time'] = start_time
+    record_dict['time']['start'] = start_time
     # Begin
     get_status(url)
 
