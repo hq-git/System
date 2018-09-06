@@ -8,6 +8,7 @@ import json
 import sys
 import logging
 
+# API url which want to test
 url_dict = {
     'api_ha': 'http://bb.liwenbianji.cn:3030/api/Server/status',
     'api_direct': 'http://bb.edanzgroup.com:3000/api/Server/status',
@@ -16,23 +17,20 @@ interval_time = int(10)
 
 
 class ApiTest(object):
-    '''
-    Test Sysbb API line status
-    '''
+    """Test Sysbb API line status"""
     def __init__(self):
         self.record_dict = None
         self.thread_list = None
         self.lock = threading.Lock()
 
     def help(self):
+        """usage"""
         print('Usage: ./backbone-line-test.py OPTION\n \
         print_result   -> Print current result\n \
         start_test     -> Run test script')
 
     def handle(self):
-        '''
-        Handle typed in method
-        '''
+        """Handle typed in method"""
         if sys.argv:
             if len(sys.argv) > 1:
                 method_str = sys.argv[1]
@@ -49,6 +47,7 @@ class ApiTest(object):
             self.help()
 
     def start_test(self):
+        """Start to test API,initialize time and start the thread for per API url"""
         # Get start time
         start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         print('%s Start test Sysbb API !' % start_time)
@@ -72,6 +71,7 @@ class ApiTest(object):
             t.join()
 
     def __get_status(self, target):
+        """main logic"""
         while True:
             if target in self.record_dict:
                 self.record_dict[target]['total_times'] += 1
@@ -111,6 +111,7 @@ class ApiTest(object):
             time.sleep(interval_time)
 
     def print_result(self):
+        """Print test result"""
         with open('%s-result.json' % __file__.replace('.py', ''), 'r') as f:
             recorde_dict = json.load(f)
             # recorde_dict = json.dumps(recorde_dict, indent=1)
@@ -126,6 +127,7 @@ class ApiTest(object):
                          100 - recorde_dict[i]['success_times']/recorde_dict[i]['total_times']*100,))
 
     def __log_record(self, msg):
+        """record of failed connection"""
         # logging.basicConfig(filename='backbone-test-multithread.log', level=logging.WARN)
         # logging.warning(msg)
         pass
