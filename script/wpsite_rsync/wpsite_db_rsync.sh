@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # Sync DB from local to remote host
+# Need add below privileges with visudo
+# Defaults:  devuser  !requiretty
+# devuser   ALL=(root) NOPASSWD:bin/rm -rf /tmp/*.sql.gz
 # Author: HaoQiang at 20190222
 
 if [ $# -lt 2 ]; then
