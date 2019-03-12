@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Sync files from local to remote host
 # Author: HaoQiang at 20190222
 
@@ -15,8 +14,9 @@ fi
 SRC_HOST=$1
 DST_HOST=$2
 Option="-av --progress --exclude=wp-config.php"
-Sync_folder=/data/web/$SRC_HOST/
-#Sync_folder=/data/web/$SRC_HOST/sites/all/files/
+SRC_SITE_ROOT=/data/web/$SRC_HOST/
+DST_SITE_ROOT=/data/web/$DST_HOST/
+#SRC_SITE_ROOT=/data/web/$SRC_HOST/sites/all/files/
 
 # Generate the rsync command
 if [ $3 ]; then
@@ -24,7 +24,7 @@ if [ $3 ]; then
 		Option=$Option" --dry-run"
 	fi
 fi
-rsync_command="/usr/bin/rsync $Option $Sync_folder* $DST_HOST:$Sync_folder"
+rsync_command="/usr/bin/rsync $Option $SRC_SITE_ROOT* $DST_HOST:$DST_SITE_ROOT"
 
 # Confirm whether to run the command
 while [ 1 != 2 ]; do
