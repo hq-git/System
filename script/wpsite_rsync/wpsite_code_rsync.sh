@@ -24,7 +24,7 @@ if [ $3 ]; then
 		Option=$Option" --dry-run"
 	fi
 fi
-rsync_command="/usr/bin/rsync $Option $SRC_SITE_ROOT* $DST_HOST:$DST_SITE_ROOT"
+rsync_command="/usr/bin/rsync $Option $SRC_SITE_ROOT $DST_HOST:$DST_SITE_ROOT"
 
 # Confirm whether to run the command
 while [ 1 != 2 ]; do
